@@ -1,0 +1,4 @@
+---
+
+# The following App file needs to be in roles/centos_splunk_forwarder/files
+send_to_forwarder_app: 100_customer_splunkcloud.spl
