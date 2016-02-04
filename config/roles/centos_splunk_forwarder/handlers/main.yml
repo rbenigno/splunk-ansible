@@ -1,0 +1,7 @@
+---
+# handlers file for Splunk Forwarder
+
+- name: restart splunk forwarder
+  command: /opt/splunkforwarder/bin/splunk restart
+  become: yes
+  become_user: splunk

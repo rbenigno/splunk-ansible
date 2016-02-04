@@ -1,0 +1,15 @@
+---
+# file: roles/common_centos/tasks/main.yml
+
+- name: be sure yum-cron is installed
+  yum: name=yum-cron state=installed
+  tags: yum-cron
+
+- name: Copy yum-cron config file
+  copy: src=yum-cron.conf dest=/etc/yum/yum-cron.conf
+  notify:
+  - restart yum-cron
+
+- name: ensure yum-cron is running (and enable it at boot)
+  service: name=yum-cron state=started enabled=yes
+
