@@ -7,4 +7,13 @@ Vagrant.configure(2) do |config|
 
   #config.vm.synced_folder ".", "/vagrant", disabled: true
 
+  # Provision with Ansible
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "site.yml"
+    ansible.sudo = true
+    ansible.groups = {
+      "syslog-forwarders" => ["default"]
+    }
+  end
+
 end

@@ -1,3 +1,6 @@
+# Local relevent
+cust_*
+
 # OS-specific
 .DS_Store
 

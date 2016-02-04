@@ -7,9 +7,6 @@
   changed_when: False
   register: firewalld_status
 
-- debug: msg={{firewalld_status.stdout}}
-  when: firewalld_status.stdout == "true"
-
 # Open ports on firewalld
 - name: Open firewalld ports
   firewalld: zone=public port={{ item }} permanent=true state=enabled
