@@ -1,0 +1,18 @@
+options {
+    use_dns (yes);
+    frac_digits(4);
+};
+
+source s_net {
+	udp();
+	tcp();
+};
+
+destination d_files_splunk {
+	file("{{ syslog_destination_folder }}/$HOST/$MONTH$DAY.log" create_dirs(yes));
+};
+
+log {
+	source(s_net);
+	destination(d_files_splunk);
+};

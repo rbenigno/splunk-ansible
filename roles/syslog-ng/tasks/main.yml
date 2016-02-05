@@ -1,0 +1,20 @@
+---
+
+# Create syslog-ng install source folder
+- include: EPEL-repo.yml
+
+- name: Install syslog-ng
+  yum: name=syslog-ng
+
+- name: Replace default syslog-ng.conf
+  copy: src=syslog-ng.conf dest=/etc/syslog-ng/syslog-ng.conf owner=root group=root mode=644
+  notify:
+  - restart syslog-ng
+
+- name: Load syslog configuration
+  template: src=collector.conf.j2 dest=/etc/syslog-ng/conf.d/collector.conf owner=root group=root mode=644
+  notify:
+  - restart syslog-ng
+
+- name: Ensure syslog-ng is running (and enable it at boot)
+  service: name=syslog-ng state=started enabled=yes
