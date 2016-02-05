@@ -3,27 +3,21 @@
 
 # Create Splunk install source folder
 - name: Create splunk installer folder
-  file: path={{ splunk_install_source }}/ state=directory 
+  file: path={{ splunk_install_source }}/ state=directory
 
-# Drop in the Splunk Cloud Forwarder App
-- name: Upload the Splunk Clound Forwarder App
-  copy: src={{ send_to_forwarder_app }} dest={{ splunk_install_source }}/ 
-
-# Download and install the Splunk Universal Forwarder 
-
-- name: check universal forwarder download
+# Download and install the Splunk Universal Forwarder
+- name: Check universal forwarder download
   stat: path={{ splunk_install_source }}/splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm get_md5=no
   register: forwarder_rpm
 
-- name: download universal forwarder
-  get_url: url="http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.3.2&product=universalforwarder&filename=splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm&wget=true" dest={{ splunk_install_source }}/
+- name: Download universal forwarder
+  get_url: url={{ splunk_fetch_url }} dest={{ splunk_install_source }}/
   when: forwarder_rpm.stat.exists == False
 
 - name: Install Splunk Universal Forwarder
-  yum: name={{ splunk_install_source }}/splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm
+  yum: name={{ splunk_install_source }}/{{ splunk_installer_pkg }}
   register: forwarder_install
 
-# Drop in the Splunk Cloud Forwarder App
 - name: Drop in the user-seed.conf file
   template: src=user-seed.conf.j2 dest={{ splunk_home }}/etc/system/local/user-seed.conf owner=splunk group=splunk mode=600
 
@@ -37,7 +31,11 @@
   command: "{{ splunk_home }}/bin/splunk enable boot-start -user splunk"
   when: forwarder_install.changed
 
-- name: Install the Cloud Forwarder App
+# Load App to configure forward-servers
+- name: Load the Splunk Forwarder App
+  copy: src={{ send_to_forwarder_app }} dest={{ splunk_install_source }}/ 
+
+- name: Install forwarding App
   command: "{{ splunk_home }}/bin/splunk install app {{ splunk_install_source }}/{{ send_to_forwarder_app }} -update 1 -auth admin:{{splunk_admin_pw}} creates=/opt/splunkforwarder/etc/apps/{{ send_to_forwarder_app }}"
   become: yes
   become_user: splunk

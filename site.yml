@@ -9,10 +9,8 @@
 
 - name: Install general syslog forwarder
   hosts: syslog-forwarders
-  vars:
-    - splunk_install_source: /tmp/splunk_installer
   vars_files:
     - cust_vars.yml
   roles:
     - centos_splunk_forwarder
-    - splunk_syslog_forwarder
+    - splunk_syslog

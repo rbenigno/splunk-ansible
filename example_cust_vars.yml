@@ -1,4 +1,17 @@
 ---
 
+# The Splunk Universal Forwarder installer can be placed here (or this location will be used for the download)
+splunk_install_source: "/tmp/splunk_installer"
+splunk_installer_pkg: "splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm"
+
+# If the Splunk package is not already local it will be downloaded from this URL
+splunk_fetch_url: "http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.3.2&product=universalforwarder&filename=splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm&wget=true"
+
+# Home folder for Splunk
+splunk_home: /opt/splunkforwarder
+
 # The following App file needs to be in roles/centos_splunk_forwarder/files
-send_to_forwarder_app: 100_customer_splunkcloud.spl
+send_to_forwarder_app: "100_customer_splunkcloud.spl"
+
+# The local UF password will be changed to this
+splunk_admin_pw: changeme123
