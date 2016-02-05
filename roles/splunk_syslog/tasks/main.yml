@@ -1,9 +1,8 @@
 ---
-# file: roles/splunk_syslog_forwarder/tasks/main.yml
 
 # Check / configure firewalld
 - name: Check status of firewalld
-  shell: "if service firewalld status | grep -q running;   then echo true;   else echo false; fi;"
+  shell: "if service firewalld status | grep -q running; then echo true; else echo false; fi;"
   changed_when: False
   register: firewalld_status
 
@@ -17,41 +16,16 @@
     - 10001/tcp
   when: firewalld_status.stdout == "true"
 
-- name: check for firewalld masquerade
-  command: "firewall-cmd --query-masquerade"
-  register: check_firewalld_masquerade
-  changed_when: ("no" in check_firewalld_masquerade.stdout)
-  failed_when: not (("no" in check_firewalld_masquerade.stdout) or ("yes" in check_firewalld_masquerade.stdout))
-  when: firewalld_status.stdout == "true"
+# Drop in our input configuration
+- name: Create Splunk syslog app folder
+  file: path={{ splunk_home }}/etc/apps/syslog/default state=directory owner=splunk group=splunk mode=755
 
-- name: enable firewalld masquerade
-  command: "firewall-cmd --add-masquerade --permanent"
-  when: check_firewalld_masquerade.changed
+- name: Load syslog inputs.conf
+  template: src=default_inputs.conf.j2 dest={{ splunk_home }}/etc/apps/syslog/default/inputs.conf owner=splunk group=splunk mode=600
+  notify:
+  - restart splunk forwarder
 
-- name: enable firewalld masquerade
-  command: "firewall-cmd --add-masquerade"
-  when: check_firewalld_masquerade.changed
-
-# Splunk service runs as a non-root user, so forward the default syslog port to the listening port
-- name: check for syslog port forwarding
-  command: "firewall-cmd --query-forward-port=port=514:proto=udp:toport=10514"
-  register: check_syslog_forward
-  changed_when: ("no" in check_syslog_forward.stdout)
-  failed_when: not (("no" in check_syslog_forward.stdout) or ("yes" in check_syslog_forward.stdout))
-  when: firewalld_status.stdout == "true"
-
-- name: forward syslog port 
-  command: "firewall-cmd --add-forward-port=port=514:proto=udp:toport=10514 --permanent"
-  when: check_syslog_forward.changed
-
-- name: forward syslog port
-  command: "firewall-cmd --add-forward-port=port=514:proto=udp:toport=10514"
-  when: check_syslog_forward.changed
-
-# Drop in our search app inputs.conf
-- name: Create splunk search local config folder
-  file: path={{ splunk_home }}/etc/apps/search/local state=directory owner=splunk group=splunk mode=755
-
-- copy: src=search_local_inputs.conf dest={{ splunk_home }}/etc/apps/search/local/inputs.conf owner=splunk group=splunk mode=600
+- name: Load syslog props.conf
+  copy: src=default_props.conf dest={{ splunk_home }}/etc/apps/syslog/default/props.conf owner=splunk group=splunk mode=600
   notify:
   - restart splunk forwarder

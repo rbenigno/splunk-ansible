@@ -19,8 +19,11 @@
 - name: Ensure syslog-ng is running (and enable it at boot)
   service: name=syslog-ng state=started enabled=yes
 
+- name: Create log file owner
+  user: name={{ log_owner }} shell=/bin/bash state=present
+
 - name: Create syslog destination folder
-  file: path={{ syslog_destination_folder }}/ state=directory owner=root group=root mode=600
+  file: path={{ syslog_destination_folder }}/ state=directory owner={{ log_owner }} group={{ log_group }} mode=770
 
 - name: Add cron job for maintaining the log folder
   template: src=syslog-ng-logclean.j2 dest=/etc/cron.daily/syslog-ng-logclean owner=root group=root mode=700

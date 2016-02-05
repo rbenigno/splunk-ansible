@@ -19,6 +19,7 @@
 
 - name: Drop in the user-seed.conf file
   template: src=user-seed.conf.j2 dest={{ splunk_home }}/etc/system/local/user-seed.conf owner=splunk group=splunk mode=600
+  when: forwarder_install.changed
 
 - name: Start splunk for the first time
   command: "{{ splunk_home }}/bin/splunk start --accept-license"
@@ -35,7 +36,7 @@
   copy: src={{ send_to_forwarder_app }} dest={{ install_source }}/ 
 
 - name: Install forwarding App
-  command: "{{ splunk_home }}/bin/splunk install app {{ install_source }}/{{ send_to_forwarder_app }} -update 1 -auth admin:{{splunk_admin_pw}} creates=/opt/splunkforwarder/etc/apps/{{ send_to_forwarder_app }}"
+  command: "{{ splunk_home }}/bin/splunk install app {{ install_source }}/{{ send_to_forwarder_app }} -update 1 -auth admin:{{splunk_admin_pw}} creates={{ splunk_home }}/etc/apps/{{ send_to_forwarder_app }}"
   become: yes
   become_user: splunk
   notify:

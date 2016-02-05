@@ -9,7 +9,7 @@ source s_net {
 };
 
 destination d_files_splunk {
-	file("{{ syslog_destination_folder }}/$HOST/$YEAR$MONTH$DAY.log" create_dirs(yes));
+	file("{{ syslog_destination_folder }}/$HOST/$YEAR$MONTH$DAY.log" create_dirs(yes) dir_owner("{{ log_owner }}") dir_group("{{ log_group }}") dir_perm(0770) owner("{{ log_group }}") group("{{ log_group }}") perm(0660));
 };
 
 log {

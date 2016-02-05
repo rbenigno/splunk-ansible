@@ -1,0 +1,19 @@
+[udp://10514]
+connection_host = dns
+#index = syslog
+sourcetype = syslog
+# source = syslog
+
+[tcp://10514]
+connection_host = dns
+#index = syslog
+sourcetype = syslog
+# source = syslog
+
+[monitor://{{ syslog_destination_folder }}/*/]
+disabled = 0
+host_regex = {{ syslog_destination_folder }}/(.*)/
+#index = syslog
+sourcetype = syslog-ng
+blacklist = .gz$
+whitelist = .log$

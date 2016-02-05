@@ -14,3 +14,4 @@
   roles:
     - { role: syslog-ng, tags: ["syslog"] }
     - { role: splunk_forwarder, tags: ["splunk"] }
+    - { role: splunk_syslog, tags: ["splunk"] }

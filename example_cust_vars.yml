@@ -1,6 +1,6 @@
 ---
 
-# Location where syslog messages will be stored
+# Location where syslog messages will be stored (no trailing slash)
 syslog_destination_folder: "/var/log/splunk"
 
 # Source folder for the Splunk install files.

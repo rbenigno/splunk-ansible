@@ -1,1 +1,3 @@
 ---
+log_owner: splunk
+log_group: splunk
