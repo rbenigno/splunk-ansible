@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# 1. Delete logs modified $delete_days days ago
+# 2. Delete empty folders
+
+delete_days=2
+
+/usr/bin/logger -t syslog-ng-logclean "Deleting logs older than $delete_days days in {{ syslog_destination_folder }}"
+
+# Delete old logs
+find {{ syslog_destination_folder }}/ -daystart -mtime +$delete_days -type f -path "*/????????.log" -exec rm {} \; 2>&1 | /usr/bin/logger -t syslog-ng-logclean
+
+# Delete empty directories
+find {{ syslog_destination_folder }}/ -depth -mindepth 1 -type d -empty -exec rmdir {} \; 2>&1 | /usr/bin/logger -t syslog-ng-logclean
+
+# HUP syslog-ng process
+systemctl reload syslog-ng 2>&1 | /usr/bin/logger -t syslog-ng-logclean
