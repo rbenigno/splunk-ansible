@@ -24,8 +24,3 @@
   template: src=default_inputs.conf.j2 dest={{ splunk_home }}/etc/apps/syslog/default/inputs.conf owner=splunk group=splunk mode=600
   notify:
   - restart splunk forwarder
-
-- name: Load syslog props.conf
-  copy: src=default_props.conf dest={{ splunk_home }}/etc/apps/syslog/default/props.conf owner=splunk group=splunk mode=600
-  notify:
-  - restart splunk forwarder
