@@ -13,7 +13,7 @@
   with_items:
     - 514/udp
     - 10514/udp
-    - 10001/tcp
+    - 10514/tcp
   when: firewalld_status.stdout == "true"
 
 # Drop in our input configuration

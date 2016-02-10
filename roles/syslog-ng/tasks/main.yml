@@ -1,7 +1,7 @@
 ---
 
-# Create syslog-ng install source folder
-- include: EPEL-repo.yml
+- name: Enable EPEL 
+  yum: name=epel-release
 
 - name: Install syslog-ng
   yum: name=syslog-ng

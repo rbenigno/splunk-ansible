@@ -3,7 +3,7 @@
 # 1. Delete logs modified $delete_days days ago
 # 2. Delete empty folders
 
-delete_days=2
+delete_days={{ log_retention_days }}
 
 /usr/bin/logger -t syslog-ng-logclean "Deleting logs older than $delete_days days in {{ syslog_destination_folder }}"
 
