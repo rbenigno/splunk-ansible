@@ -31,6 +31,22 @@
   command: "{{ splunk_home }}/bin/splunk enable boot-start -user splunk"
   when: forwarder_install.changed
 
+- name: Check the Forwarder license 
+  shell: "{{ splunk_home }}/bin/splunk list licenser-groups -auth admin:{{splunk_admin_pw}} | awk -F ':' '/Forwarder/{getline; print $2}'"
+  register: forwarder_license_status
+  when: use_splunk_forwarder_license
+  changed_when: False
+  become: yes
+  become_user: splunk
+
+- name: Activate the Forwarder license
+  command: "{{ splunk_home }}/bin/splunk edit licenser-groups Forwarder -is_active 1 -auth admin:{{splunk_admin_pw}}"
+  when: use_splunk_forwarder_license and forwarder_license_status.stdout == "0"
+  become: yes
+  become_user: splunk
+  notify:
+  - restart splunk forwarder
+
 # Load App to configure forward-servers
 - name: Load the Splunk Forwarder App
   copy: src={{ send_to_forwarder_app }} dest={{ install_source }}/ 
