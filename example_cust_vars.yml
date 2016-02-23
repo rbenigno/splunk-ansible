@@ -1,7 +1,7 @@
 ---
 
 # Location where syslog messages will be stored (no trailing slash)
-syslog_destination_folder: "/syslog"
+syslog_destination_folder: "/var/log/syslog"
 
 # Number of days to retain logs
 log_retention_days: 2

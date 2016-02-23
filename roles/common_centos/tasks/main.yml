@@ -1,9 +1,13 @@
 ---
 # file: roles/common_centos/tasks/main.yml
 
+- name: Include policycoreutils-python package
+  yum: name=policycoreutils-python state=installed
+  tags: common
+
 - name: be sure yum-cron is installed
   yum: name=yum-cron state=installed
-  tags: yum-cron
+  tags: common
 
 - name: Copy yum-cron config file
   copy: src=yum-cron.conf dest=/etc/yum/yum-cron.conf
