@@ -1,5 +1,11 @@
 ---
 # handlers file for syslog-ng
 
+- name: systemctl daemon-reload
+  command: systemctl daemon-reload
+
 - name: restart syslog-ng
   service: name=syslog-ng state=restarted
+
+- name: restart rsyslog
+  service: name=rsyslog state=restarted

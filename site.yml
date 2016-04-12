@@ -1,17 +1,28 @@
 
 ---
-# Configures internal Splunk forwarders
 
 - name: Apply common configuration to all nodes
   hosts: all
   roles:
     - { role: common_centos, tags: ["common"] }
 
-- name: Install and configure syslog-ng with Splunk Forwader
-  hosts: syslog-forwarders
+- name: Install Splunk Servers
+  hosts: splunk-servers
   vars_files:
     - cust_vars.yml
   roles:
-    - { role: syslog-ng, tags: ["syslog"] }
-    - { role: splunk_forwarder, tags: ["splunk"] }
-    - { role: splunk_syslog, tags: ["splunk"] }
+    - { role: splunk, tags: ["splunk"] }
+
+- name: Install Splunk Heavy Forwarders
+  hosts: heavy-forwarders
+  vars_files:
+    - cust_vars.yml
+  roles:
+    - { role: splunk_heavy_forwarder, tags: ["splunk"] }
+
+- name: Install Splunk Universal Forwarders
+  hosts: universal-forwarders
+  vars_files:
+    - cust_vars.yml
+  roles:
+    - { role: splunk_universal_forwarder, tags: ["splunk"] }

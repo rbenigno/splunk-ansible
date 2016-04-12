@@ -1,0 +1,7 @@
+---
+# handlers file for Splunk
+
+- name: restart splunk
+  command: "{{ splunk_home }}/bin/splunk restart"
+  become: yes
+  become_user: splunk

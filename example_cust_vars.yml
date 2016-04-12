@@ -1,26 +1,28 @@
 ---
 
+# Source folder for the Splunk install files.
+# The files can be placed here in advance, or they will need to be downloaded.
+install_source: "/tmp/splunk_installer"
+
+splunk_installer_pkg: "splunk-6.3.3-f44afce176d0-linux-2.6-x86_64.rpm"
+splunk_fetch_url: "http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.3.3&product=splunk&filename=splunk-6.3.3-f44afce176d0-linux-2.6-x86_64.rpm&wget=true"
+
+splunk_uf_installer_pkg: "splunkforwarder-6.4.0-f2c836328108-linux-2.6-x86_64.rpm"
+splunk_uf_fetch_url: "https://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.4.0&product=universalforwarder&filename=splunkforwarder-6.4.0-f2c836328108-linux-2.6-x86_64.rpm&wget=true"
+
+# Home folder for Splunk
+splunk_home: /opt/splunk
+splunk_uf_home: /opt/splunkforwarder
+
+# Splunk App that configures the forward-servers.
+# Needs to be in roles/splunk_forwarder/files
+send_to_forwarder_app: "100_CUSTOMER.spl"
+
+# Local Splunk password (will set this during the Splunk install)
+splunk_admin_pw: changeme123
+
 # Location where syslog messages will be stored (no trailing slash)
 syslog_destination_folder: "/var/log/syslog"
 
 # Number of days to retain logs
 log_retention_days: 2
-
-# Source folder for the Splunk install files.
-# The files can be placed here in advance, or they will need to be downloaded.
-install_source: "/tmp/splunk_installer"
-splunk_installer_pkg: "splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm"
-splunk_fetch_url: "http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=linux&version=6.3.2&product=universalforwarder&filename=splunkforwarder-6.3.2-aaff59bb082c-linux-2.6-x86_64.rpm&wget=true"
-
-# Home folder for Splunk
-splunk_home: /opt/splunkforwarder
-
-# Splunk App that configures the forward-servers.
-# Needs to be in roles/splunk_forwarder/files
-send_to_forwarder_app: "100_customer_splunkcloud.spl"
-
-# Local Splunk password (will set this during the Splunk install)
-splunk_admin_pw: changeme123
-
-# Activate the Splunk "Forwarder" license (relevant on Heavy Forwarder)
-splunk_forwarder_license: 0

@@ -5,6 +5,7 @@
   shell: "if service firewalld status | grep -q running; then echo true; else echo false; fi;"
   changed_when: False
   register: firewalld_status
+  always_run: yes
 
 # Open ports on firewalld
 - name: Open firewalld ports
@@ -22,5 +23,15 @@
 
 - name: Load syslog inputs.conf
   template: src=default_inputs.conf.j2 dest={{ splunk_home }}/etc/apps/syslog/default/inputs.conf owner=splunk group=splunk mode=600
+  notify:
+  - restart splunk forwarder
+
+- name: Load syslog props.conf
+  copy: src=syslog_default_props.conf dest={{ splunk_home }}/etc/apps/syslog/default/props.conf owner=splunk group=splunk mode=600
+  notify:
+  - restart splunk forwarder
+
+- name: Load syslog transforms.conf
+  copy: src=syslog_default_transforms.conf dest={{ splunk_home }}/etc/apps/syslog/default/transforms.conf owner=splunk group=splunk mode=600
   notify:
   - restart splunk forwarder

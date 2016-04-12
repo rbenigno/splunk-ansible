@@ -10,10 +10,8 @@ connection_host = dns
 sourcetype = syslog
 # source = syslog
 
-[monitor://{{ syslog_destination_folder }}/*/]
+[monitor://{{ syslog_destination_folder }}/*/*.log]
 disabled = 0
-host_regex = {{ syslog_destination_folder }}/(.*)/
+host_regex = .*\/(.*)/.*.log
 #index = syslog
-sourcetype = syslog_nohost
-blacklist = .gz$
-whitelist = .log$
+sourcetype = syslog-ng

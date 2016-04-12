@@ -1,2 +1,8 @@
-[syslog-forwarders]
-server1 ansible_user=root
+[splunk-servers]
+srv1 ansible_user=vagrant
+
+[heavy-forwarders]
+hvy1 ansible_user=vagrant
+
+[universal-forwarders]
+ufw1 ansible_user=vagrant

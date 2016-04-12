@@ -1,15 +1,27 @@
 options {
-    use_dns (yes);
-    frac_digits(4);
+	create-dirs(yes);
+	owner("{{ log_owner }}");
+	group("{{ log_group }}");
+	dir-owner("{{ log_owner }}");
+	dir-group("{{ log_group }}");
+	dir-perm(0755);
+	perm(0755);
+
+	time-reopen(10);
+	keep-hostname(yes);
+	log-msg-size(65536);
+
+	use_dns (yes);
+	ts-format(iso);
 };
 
 source s_net {
-	udp(ip(0.0.0.0) port(514));
+	udp(ip(0.0.0.0) port(514) flags(no-parse));
 	tcp(ip(0.0.0.0) port(514));
 };
 
 destination d_files_splunk {
-	file("{{ syslog_destination_folder }}/$HOST/$YEAR$MONTH$DAY.log" create_dirs(yes) dir_owner("{{ log_owner }}") dir_group("{{ log_group }}") dir_perm(0770) owner("{{ log_group }}") group("{{ log_group }}") perm(0660));
+	file("{{ syslog_destination_folder }}/$HOST/$YEAR$MONTH$DAY.log");
 };
 
 log {

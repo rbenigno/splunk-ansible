@@ -6,6 +6,13 @@
 - name: Install syslog-ng
   yum: name=syslog-ng
 
+- name: Syslog-ng pid file should not conflict with rsyslog
+  replace: dest=/lib/systemd/system/syslog-ng.service regexp='syslogd\.pid$' replace='syslogd-ng.pid'
+  notify:
+  - systemctl daemon-reload
+  - restart syslog-ng
+  - restart rsyslog
+
 - name: Replace default syslog-ng.conf
   copy: src=syslog-ng.conf dest=/etc/syslog-ng/syslog-ng.conf owner=root group=root mode=644
   notify:
@@ -23,7 +30,7 @@
   user: name={{ log_owner }} shell=/bin/bash state=present
 
 - name: Create syslog destination folder
-  file: path={{ syslog_destination_folder }}/ state=directory owner={{ log_owner }} group={{ log_group }} mode=770
+  file: path={{ syslog_destination_folder }}/ state=directory owner={{ log_owner }} group={{ log_group }} mode=755
 
 - name: Add cron job for maintaining the log folder
   template: src=syslog-ng-logclean.j2 dest=/etc/cron.daily/syslog-ng-logclean owner=root group=root mode=700

@@ -1,0 +1,60 @@
+---
+
+# Check / configure firewalld
+- name: Check status of firewalld
+  shell: "if service firewalld status | grep -q running; then echo true; else echo false; fi;"
+  changed_when: False
+  register: firewalld_status
+  always_run: yes
+
+# Open ports on firewalld
+- name: Open firewalld ports
+  firewalld: zone=public port={{ item }} permanent=true state=enabled
+  when: firewalld_status.stdout == 'true'
+  notify: restart firewalld
+  with_items:
+    - 8000/tcp
+    - 8089/tcp
+
+- set_fact: short_pkg_name={{ splunk_installer_pkg | regex_replace('^(\w+-(?:\d|\.)+-\w+).*', '\\1') }}
+- name: check if splunk is installed
+  command: rpm -q {{ short_pkg_name }}
+  register: pkg_status
+  failed_when: false
+  changed_when: false
+  always_run: yes
+
+- name: Create splunk installer folder
+  file: path={{ install_source }}/ state=directory
+  when: pkg_status.rc != 0
+
+- name: Check for local copy of install package
+  stat: path={{ install_source }}/{{ splunk_installer_pkg }} get_md5=no
+  register: splunk_rpm
+  always_run: yes
+
+- name: Download Splunk package
+  get_url: url={{ splunk_fetch_url }} dest={{ install_source }}/
+  when: pkg_status.rc != 0 and splunk_rpm.stat.exists == False
+
+- name: Install Splunk Package
+  yum: name={{ install_source }}/{{ splunk_installer_pkg }}
+  register: splunk_install
+  when: pkg_status.rc != 0
+
+- name: Drop in the user-seed.conf file
+  template: src=user-seed.conf.j2 dest={{ splunk_home }}/etc/system/local/user-seed.conf owner=splunk group=splunk mode=600
+  when: splunk_install.changed
+
+- name: Disable prompt to change password on first web login
+  copy: content="" dest={{ splunk_home }}/etc/.ui_login force=no owner=splunk group=splunk mode=600
+
+- name: Start splunk for the first time
+  command: "{{ splunk_home }}/bin/splunk start --accept-license"
+  when: splunk_install.changed
+  become: yes
+  become_user: splunk
+
+- name: Enable Splunk to run at boot time
+  command: "{{ splunk_home }}/bin/splunk enable boot-start -user splunk"
+  when: splunk_install.changed

@@ -1,0 +1,39 @@
+---
+
+- name: Check the Forwarder license 
+  shell: "{{ splunk_home }}/bin/splunk list licenser-groups -auth admin:{{splunk_admin_pw}} | awk -F ':' '/Forwarder/{getline; print $2}'"
+  register: forwarder_license_status
+  changed_when: False
+  become: yes
+  become_user: splunk
+  always_run: yes
+
+- name: Activate the Forwarder license
+  command: "{{ splunk_home }}/bin/splunk edit licenser-groups Forwarder -is_active 1 -auth admin:{{splunk_admin_pw}}"
+  when: forwarder_license_status.stdout == "0"
+  become: yes
+  become_user: splunk
+  notify:
+  - restart splunk
+
+# Check status of forwarding App
+- name: Checking forwarding App
+  shell: "{{ splunk_home }}/bin/splunk list app {{ send_to_forwarder_app | regex_replace('^(.*).spl$', '\\1') }} -auth admin:{{splunk_admin_pw}}"
+  register: forwarder_app_status
+  changed_when: False
+  failed_when: False
+  become: yes
+  become_user: splunk
+  always_run: yes
+
+# Load App to configure forward-servers
+- name: Load the Splunk Forwarder App
+  copy: src={{ send_to_forwarder_app }} dest={{ install_source }}/
+  when: forwarder_app_status.rc != 0
+
+- name: Install forwarding App
+  command: "{{ splunk_home }}/bin/splunk install app {{ install_source }}/{{ send_to_forwarder_app }} -update 1 -auth admin:{{splunk_admin_pw}} creates={{ splunk_home }}/etc/apps/{{ send_to_forwarder_app | regex_replace('^(.*).spl$', '\\1') }}/*"
+  become: yes
+  become_user: splunk
+  notify:
+  - restart splunk
