@@ -21,6 +21,9 @@ send_to_forwarder_app: "100_CUSTOMER.spl"
 # Local Splunk password (will set this during the Splunk install)
 splunk_admin_pw: changeme123
 
+# Index that syslog messages will be sent to
+syslog_index: main
+
 # Location where syslog messages will be stored (no trailing slash)
 syslog_destination_folder: "/var/log/syslog"
 

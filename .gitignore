@@ -1,5 +1,6 @@
 # Local relevent
 cust_*
+site.retry
 
 # OS-specific
 .DS_Store

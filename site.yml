@@ -26,3 +26,11 @@
     - cust_vars.yml
   roles:
     - { role: splunk_universal_forwarder, tags: ["splunk"] }
+
+- name: Apply Splunk Syslog Configurations
+  hosts: syslog-collector
+  vars_files:
+    - cust_vars.yml
+  roles:
+    - { role: syslog-ng, tags: ["splunk"] }
+    - { role: splunk_syslog_inputs, tags: ["splunk"] }

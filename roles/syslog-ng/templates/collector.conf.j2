@@ -20,11 +20,19 @@ source s_net {
 	tcp(ip(0.0.0.0) port(514));
 };
 
-destination d_files_splunk {
-	file("{{ syslog_destination_folder }}/$HOST/$YEAR$MONTH$DAY.log");
-};
+destination d_default { file("{{ syslog_destination_folder }}/{{ syslog_default_type }}/$HOST/$YEAR$MONTH$DAY.log"); };
+{% if syslog_source_types is defined %}
+{% for source in syslog_source_types %}
 
+# Entry for {{ source.type }}
+destination d_{{ source.type }} { file("{{ syslog_destination_folder }}/{{ source.folder }}/$HOST/$YEAR$MONTH$DAY.log"); };
+filter f_{{ source.type }} { host("{{ source.host_regex }}" flags(ignore-case)) ;};
+log { source(s_net); filter(f_{{ source.type }}); destination(d_{{ source.type }}); };
+{% endfor %}
+{% endif %}
+# Default
 log {
 	source(s_net);
-	destination(d_files_splunk);
+	destination(d_default);
+	flags(fallback);
 };
