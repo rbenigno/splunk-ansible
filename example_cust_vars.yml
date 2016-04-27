@@ -29,3 +29,19 @@ syslog_destination_folder: "/var/log/syslog"
 
 # Number of days to retain logs
 log_retention_days: 2
+
+# Targeted syslog-ng folders and their coresponding Splunk source type
+syslog_type_folders:
+  - { folder: "netapp", splunk_source_type: "ontap:syslog" }
+  - { folder: "cisco", splunk_source_type: "cisco:ios" }
+  - { folder: "uc", splunk_source_type: "cisco:uc" }
+  - { folder: "riverbed", splunk_source_type: "syslog-ng" }
+
+# Syslog-ng filters definitions for message sorting
+syslog_source_types:
+  - { type: "netapp", folder: "netapp", host_regex: "ntap.*" }
+  - { type: "cisco_switch", folder: "cisco", host_regex: "[A-Z]{2}SW.*" }
+  - { type: "cisco_router", folder: "cisco", host_regex: "[A-Z]{2}RT.*" }
+  - { type: "cisco_router_legacy", folder: "cisco", host_regex: "MPP-R.*" }
+  - { type: "cisco_uc", folder: "uc", host_regex: "[a-z]{2}-uc-.*" }
+  - { type: "riverbed", folder: "riverbed", host_regex: "[a-z]{2}-RVRBED.*" }

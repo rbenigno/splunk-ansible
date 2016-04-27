@@ -38,7 +38,8 @@ Vagrant.configure(2) do |config|
     ansible.groups = {
       "splunk-servers"       => ["srv1"],
       "heavy-forwarders"     => ["hvy1"],
-      "universal-forwarders" => ["ufw1"]
+      "universal-forwarders" => ["ufw1"],
+      "syslog-collector"     => ["srv1"]
     }
   end
 

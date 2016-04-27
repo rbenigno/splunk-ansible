@@ -6,3 +6,6 @@ hvy1 ansible_user=vagrant
 
 [universal-forwarders]
 ufw1 ansible_user=vagrant
+
+[syslog-collector]
+hvy1
